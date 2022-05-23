@@ -1,7 +1,6 @@
-import { Flex, Grid, Image, Text } from '@chakra-ui/react';
 import type { NextPage } from 'next'
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { Flex, Grid, Skeleton, Text } from '@chakra-ui/react';
 import { CardPokemon } from '../components/CardPokemon';
 import { PokeServices } from '../service/PokeServices'
 import { PokemonResultData } from '../types/pokemon';
@@ -10,35 +9,10 @@ const Home: NextPage = () => {
 
   const pokeServices = new PokeServices();
 
-  const [pokemon, setPokemon] = useState({})
+  
   const [listPokemons, setListPokemons] = useState<PokemonResultData[]>([])
   const [isLoadingPokemon, setIsLoadingPokemon] = useState(false)
-  const [currentPokemonOrder, setCurrentPokemonOrder] = useState<null | number>(null)
 
-  async function getDataPokemon() {
-    setIsLoadingPokemon(true)
-    const data = await pokeServices.getDataPokemon(1)
-    setCurrentPokemonOrder(data.pokemon.infos.order)
-    setPokemon(data)
-
-    setIsLoadingPokemon(true)
-  }
-
-  async function handleGetNextPokemon() {
-    setIsLoadingPokemon(true)
-    const data = await pokeServices.getNextPokemon(currentPokemonOrder)
-    setPokemon(data)
-
-    setIsLoadingPokemon(true)
-  }
-
-  async function handleGetPrevPokemon() {
-    setIsLoadingPokemon(true)
-    const data = await pokeServices.getPrevPokemon(currentPokemonOrder)
-    setPokemon(data)
-
-    setIsLoadingPokemon(true)
-  }
 
   async function getListPokemon() {
     setIsLoadingPokemon(true)
@@ -76,13 +50,21 @@ const Home: NextPage = () => {
         w="100%"
       >
         {
-          listPokemons?.map(item => {
-            return (
-              
-                <CardPokemon   key={item.pokemon.infos.order} data={item} />
-              
-            )
-          })}
+          listPokemons ?
+            listPokemons?.map(item => {
+              return (
+                <CardPokemon key={item.pokemon.infos.id} data={item} />
+              )
+            })
+            :
+            <>
+              <Skeleton w="165px" h="115px" borderRadius={8} />
+              <Skeleton w="165px" h="115px" borderRadius={8} />
+              <Skeleton w="165px" h="115px" borderRadius={8} />
+              <Skeleton w="165px" h="115px" borderRadius={8} />
+              <Skeleton w="165px" h="115px" borderRadius={8} />
+            </>
+        }
       </Grid>
     </Flex>
   )

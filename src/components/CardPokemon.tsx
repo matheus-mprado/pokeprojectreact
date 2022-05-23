@@ -9,7 +9,7 @@ interface CardPokemon {
 
 export function CardPokemon({ data }: CardPokemon) {
     return (
-        <Link href={`/pokemon/${data.pokemon.infos.order}`} passHref>
+        <Link href={`/pokemon/${data.pokemon.infos.id}`} passHref>
             <Flex
                 as="a"
                 w="100%"
@@ -19,7 +19,19 @@ export function CardPokemon({ data }: CardPokemon) {
                 px="4"
                 py="4"
                 maxH="7rem"
+                position="relative"
             >
+
+                <Image
+                    src="/pokeball.svg"
+                    alt="pokeball"
+                    position="absolute"
+                    h="6rem"
+                    bottom="-0.5rem"
+                    right="-0.75rem"
+                    opacity={0.2}
+                />
+
                 <Text
                     textTransform="capitalize"
                     color="white"
@@ -46,6 +58,8 @@ export function CardPokemon({ data }: CardPokemon) {
                             )
                         })}
                     </Flex>
+
+
 
                     <Image
                         src={data.image}

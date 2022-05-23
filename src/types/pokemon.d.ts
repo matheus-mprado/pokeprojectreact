@@ -9,6 +9,8 @@ export type PokemonData = {
     weight: number
     abilities: Abilities[]
     types: TypesPokemon[]
+    stats: BaseStats[]
+    id:number;
 }
 
 
@@ -38,12 +40,27 @@ type Specie = {
     color: {
         name: string;
     }
+    flavor_text_entries: FlavorText[];
+    evolution_chain: {
+        url: string;
+    }
+}
+
+type FlavorText = {
+    flavor_text: string
 }
 
 type PokemonResultData = {
-    pokemon:{
-        infos:PokemonData,
-        species:Specie
+    pokemon: {
+        infos: PokemonData,
+        species: Specie
     }
     image: string;
+}
+
+type BaseStats = {
+    base_stat: string;
+    stat: {
+        name: string;
+    }
 }

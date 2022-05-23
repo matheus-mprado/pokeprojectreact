@@ -7,47 +7,47 @@ export class PokeServices {
         const infos: PokemonData = (await api.get(`pokemon/${pokemonIdentify}`)).data
         const species: Specie = (await api.get(`pokemon-species/${pokemonIdentify}`)).data
 
-        const pokemon ={
+        const pokemon = {
             infos,
-            species
+            species,
         }
 
         return pokemon;
     }
 
-    private async getSpecies(pokemonID: number) {
-        const species = (await api.get(`pokemon-species/${pokemonID}`)).data
+    async getImageFromSpecies(pokemonName: string) {
+        const pokemon: PokemonData = (await api.get(`pokemon/${pokemonName}`)).data
+        const image = this.formattedImage(pokemon)
 
-        return species
+        return image
     }
 
     private formattedImage(pokemon: PokemonData) {
         const image = pokemon.sprites.other["official-artwork"].front_default
-
         return image;
     }
 
+    async teste(pokemon) {
+        const poke = await this.getPokemon(pokemon.name)
+        const image = await this.formattedImage(poke.infos)
+
+        const data = {
+            pokemon: poke,
+            image
+        }
+
+        return data;
+    }
+
+    
     async getPokemonList() {
         const list = (await api.get('pokemon')).data;
-        // let result: PokemonResultData[] = [];
 
-        return Promise.all(list.results.map(async (pokemon) => {
-            try {
-                const poke = await this.getPokemon(pokemon.name)
-                const image = await this.formattedImage(poke.infos)
+        const allpromise = Promise.all(list.results.map(item => this.teste(item)))
 
+        const values = await allpromise;
 
-                const data = {
-                    pokemon: poke,
-                    image
-                }
-
-                return data;
-            } catch (err) {
-                console.log(err)
-            }
-        }))
-
+        return values
     }
 
     async getDataPokemon(pokemonID: number) {
@@ -74,7 +74,7 @@ export class PokeServices {
             return;
         }
 
-        const data = await this.getDataPokemon(currentPokemon + 1);
+        const data = await this.getDataPokemon(currentPokemon - 1);
         return data
     }
 
