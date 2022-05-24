@@ -9,7 +9,7 @@ import { HiOutlineStar, HiStar } from 'react-icons/hi';
 import { useRouter } from 'next/router';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-const INCREMENT_NUMBER_PER_PAGE = 10;
+const INCREMENT_NUMBER_PER_PAGE = 20;
 
 const Home: NextPage = () => {
 
