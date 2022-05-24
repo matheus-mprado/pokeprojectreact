@@ -1,12 +1,31 @@
 import { Button } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import { HiArrowLeft, HiArrowRight } from "react-icons/hi";
 
 interface ButtonsMoveRouterProps {
-    onPrevPokemon: () => void;
-    onNextPokemon: () => void;
+    currentPokemonID: string;
 }
 
-export function ButtonsMoveRouter({ onPrevPokemon, onNextPokemon }: ButtonsMoveRouterProps) {
+export function ButtonsMoveRouter({ currentPokemonID }: ButtonsMoveRouterProps) {
+
+    const router = useRouter()
+
+    function handleNextPokemon() {
+        const nextPokemonID = Number(currentPokemonID) + 1
+
+        router.push(`/pokemon/${nextPokemonID}`)
+    }
+
+
+    function handlePrevPokemon() {
+        const nextPokemonID = Number(currentPokemonID) - 1
+
+        if (nextPokemonID === 0) {
+            return;
+        }
+        router.push(`/pokemon/${nextPokemonID}`)
+    }
+
     return (
         <>
             <Button
@@ -17,9 +36,9 @@ export function ButtonsMoveRouter({ onPrevPokemon, onNextPokemon }: ButtonsMoveR
                     outline: 'none'
                 }}
                 left="0"
-                onClick={onPrevPokemon}
+                onClick={handlePrevPokemon}
                 _hover={{
-                    bg:'transparent'
+                    bg: 'transparent'
                 }}
             >
                 <HiArrowLeft size={32} color="white" />
@@ -34,10 +53,10 @@ export function ButtonsMoveRouter({ onPrevPokemon, onNextPokemon }: ButtonsMoveR
                     outline: 'none'
                 }}
                 _hover={{
-                    bg:'transparent'
+                    bg: 'transparent'
                 }}
                 right="0"
-                onClick={onNextPokemon}
+            onClick={handleNextPokemon}
             >
                 <HiArrowRight size={32} color="white" />
             </Button>

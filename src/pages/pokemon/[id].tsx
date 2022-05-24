@@ -1,16 +1,18 @@
-import { Button, Flex, Image, Spinner, Text } from "@chakra-ui/react";
 import Head from "next/head";
+import { Flex, Image, Spinner } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { useEffect, useLayoutEffect, useState } from "react";
-import { HiArrowLeft, HiArrowRight, HiOutlineArrowSmLeft, HiOutlineStar, HiStar } from 'react-icons/hi'
-import { ButtonMenu } from "../../components/core/ButtonMenu";
-import { ButtonType } from "../../components/core/ButtonType";
-import { AboutPokemon } from "../../components/menu/AboutPokemon";
-import { BaseStatsPokemon } from "../../components/menu/BaseStatsPokemon";
-import { EvolutionPokemon } from "../../components/menu/EvolutionPokemon";
-import { ButtonsMoveRouter } from "../../components/screens/pokemon/ButtonsMoveRouter";
+import { useEffect, useState } from "react";
+
+import { ButtonsMoveRouter } from "../../components/screens/pokemon/BottonsMoveRouter";
+import { BottonSheet } from "../../components/screens/pokemon/ButtonSheet";
+import { HeaderPokemon } from "../../components/screens/pokemon/HeaderPokemon";
+import { InfosPokemon } from "../../components/screens/pokemon/InfosPokemon";
+
+
 import { api } from "../../service/api";
+
 import { ColorsData, PokemonData, PokemonResultData, Specie } from "../../types/pokemon";
+
 import { formattedIDPokemon } from "../../utils/formattedIDPokemon";
 import { switchColor } from "../../utils/switchColor";
 
@@ -20,32 +22,19 @@ interface PokemonProps {
 
 
 
-const menuList = [
-    {
-        id: 1,
-        title: "About",
-    }, {
-        id: 2,
-        title: "Base Stats",
-    },
-    {
-        id: 3,
-        title: "Evolution",
-    }
-];
-
 export default function Pokemon({ }: PokemonProps) {
 
     const router = useRouter()
 
-    const [currentMenu, setCurrentMenu] = useState(1)
     const [pokemon, setPokemon] = useState<PokemonResultData>({} as PokemonResultData)
-    const [existInWishList, setExistInWishList] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
+    const [existInWishList, setExistInWishList] = useState(false)
     const [colors, setColors] = useState<ColorsData>({} as ColorsData)
 
     const { id } = router.query
 
+
+    // Busca o pokemon e sua specie e formata a imagem de acordom com a ID ou nome do pokemon
     async function getPokemonData() {
         setPokemon(null)
         setIsLoading(true)
@@ -62,17 +51,7 @@ export default function Pokemon({ }: PokemonProps) {
                 id: String(info.id)
             }
 
-            if (typeof window !== undefined) {
-                const data = localStorage.getItem('@PokemonProject:PokemonWishList');
-                const JSONdata = JSON.parse(data)
-
-                if (JSONdata !== null) {
-                    if (JSONdata.filter(item => item.name === info.name).length > 0) {
-                        setExistInWishList(true)
-                    }
-                }
-
-            }
+            verifyWishList(info.name)
 
             setColors(switchColor(specie))
             setPokemon(pokemon)
@@ -83,7 +62,7 @@ export default function Pokemon({ }: PokemonProps) {
         setIsLoading(false)
     }
 
-
+    // Retorna a wish list do localstorage
     function getWishList() {
         if (typeof window !== undefined) {
             const data = JSON.parse(localStorage.getItem("@PokemonProject:PokemonWishList"))
@@ -92,72 +71,22 @@ export default function Pokemon({ }: PokemonProps) {
         }
     }
 
-    function handleRemoveFromWishList(name: string) {
-        const data = getWishList();
+    // Verifica se o pokemon esta na wish list no localstorage
+    function verifyWishList(name: string) {
+        const data = getWishList()
 
-        const newList = data.filter(item => item.name !== name);
-        if (typeof window !== undefined) {
-            localStorage.setItem("@PokemonProject:PokemonWishList", JSON.stringify(newList))
-            setExistInWishList(false)
-        }
-    }
-
-    function handleAddWishListPokemons(name: string, id: string) {
-        const data = {
-            name,
-            id
-        }
-
-        if (typeof window !== undefined) {
-
-            const dataList = getWishList()
-
-            if (dataList !== null) {
-                if (dataList.filter(item => item.name === name).length > 0) {
-                    return
-                } else {
-                    const newListItem = [...dataList, data]
-                    localStorage.setItem("@PokemonProject:PokemonWishList", JSON.stringify(newListItem))
-                    setExistInWishList(true)
-
-                }
-            } else {
-                localStorage.setItem("@PokemonProject:PokemonWishList", JSON.stringify([data]))
+        if (data !== null) {
+            if (data.filter(item => item.name === name).length > 0) {
                 setExistInWishList(true)
-
             }
         }
     }
 
-    function handleGoBack() {
-        router.push('/')
-    }
-
-    function handleNextPokemon() {
-        const nextPokemonID = Number(pokemon.id) + 1
-
-        router.push(`/pokemon/${nextPokemonID}`)
-    }
-
-
-    function handlePrevPokemon() {
-        const nextPokemonID = Number(pokemon.id) - 1
-
-        if (nextPokemonID === 0) {
-            return;
-        }
-        router.push(`/pokemon/${nextPokemonID}`)
-    }
-
-
     useEffect(() => {
         setExistInWishList(false)
-    }, [id])
-
-    useLayoutEffect(() => {
         getPokemonData()
         getWishList()
-    }, [router.query.id])
+    }, [id])
 
     if (!pokemon) {
         return (
@@ -167,8 +96,9 @@ export default function Pokemon({ }: PokemonProps) {
                 align="center"
                 justify="center"
             >
-                <Spinner/>
-            </Flex>)
+                <Spinner />
+            </Flex>
+        )
     }
 
     return (
@@ -182,67 +112,19 @@ export default function Pokemon({ }: PokemonProps) {
                 w="100%"
                 flexDir="column"
             >
-                <Flex
-                    w="100%"
-                    maxHeight="5rem"
-                    align="center"
-                    justifyContent="space-between"
-                    px="6"
-                    pt="8"
+                <HeaderPokemon
+                    colors={colors}
+                    pokemon={pokemon}
+                    existInWishList={existInWishList}
+                    getWishList={getWishList}
+                    setExistInWishList={setExistInWishList}
+                />
 
-                >
-                    <HiOutlineArrowSmLeft size={28} color={colors.iconColor} onClick={handleGoBack} />
-                    {existInWishList ?
-                        <HiStar size={22} color={colors.iconColor} onClick={() => handleRemoveFromWishList(pokemon.info.name)} />
-                        :
-                        <HiOutlineStar size={22} color={colors.iconColor} onClick={() => handleAddWishListPokemons(pokemon.info.name, pokemon.id)} />
-                    }
-                </Flex>
+                <InfosPokemon
+                    colors={colors}
+                    pokemon={pokemon}
+                />
 
-                <Flex
-                    px="8"
-                    mt="6"
-                    flexDir="column"
-                >
-                    <Flex
-                        align="baseline"
-                        justify="space-between"
-                        w="100%"
-                    >
-                        <Text
-                            as="h2"
-                            textTransform="capitalize"
-                            fontWeight={600}
-                            color={colors.textColor}
-                            fontSize="1.75rem"
-                        >
-                            {pokemon.info?.name}
-                        </Text>
-
-                        <Text
-                            as="h3"
-                            color={colors.textColor}
-                        >
-                            {formattedIDPokemon(pokemon.info?.id)}
-                        </Text>
-                    </Flex>
-
-                    <Flex
-                        gap="0.5rem"
-                        mt="1rem"
-                    >
-                        {pokemon.info?.types.map(item => {
-                            return (
-                                <ButtonType
-                                    key={`${pokemon.info?.name}.type`}
-                                    color={colors}
-                                    type={item.type.name}
-                                />
-                            )
-                        })}
-                    </Flex>
-
-                </Flex>
 
                 <Image
                     src="/pokeball.svg"
@@ -254,66 +136,13 @@ export default function Pokemon({ }: PokemonProps) {
                     left={["4rem", "5rem"]}
                 />
 
-                <Flex
-                    height="100%"
-                    bg="gray.50"
-                    borderTopRadius="2rem"
-                    mt="15rem"
-                    px="2rem"
-                    flexDir="column"
-                    position="relative"
-                >
-                    <Image
-                        src={pokemon.image}
-                        alt={pokemon.info?.name}
-                        w="250px"
-                        objectFit="contain"
-                        position="absolute"
-                        alignSelf="center"
-                        top="-12rem"
-                    />
-
-                    <Flex
-                        mt="3rem"
-                        mb="0.5rem"
-                        justifyContent="space-between"
-                    >
-                        {menuList.map(item => {
-                            return (
-                                <ButtonMenu
-                                    key={item.id}
-                                    title={item.title}
-                                    onCurrentMenu={currentMenu}
-                                    menuId={item.id}
-                                    onClick={() => setCurrentMenu(item.id)}
-                                />
-                            )
-                        })}
-                    </Flex>
-
-                    {currentMenu === 1 &&
-                        <AboutPokemon
-                            pokemon={pokemon}
-                        />
-                    }
-                    {currentMenu === 2 &&
-                        <BaseStatsPokemon
-                            color={colors}
-                            stats={pokemon.info?.stats}
-                        />
-                    }
-
-                    {currentMenu === 3 &&
-                        <EvolutionPokemon
-                            pokemonName={pokemon.info?.name}
-                            evolutionChain={pokemon.specie?.evolution_chain}
-                        />
-                    }
-                </Flex>
+                <BottonSheet
+                    colors={colors}
+                    pokemon={pokemon}
+                />
 
                 <ButtonsMoveRouter
-                    onPrevPokemon={handlePrevPokemon}
-                    onNextPokemon={handleNextPokemon}
+                    currentPokemonID={pokemon.id}
                 />
 
             </Flex>

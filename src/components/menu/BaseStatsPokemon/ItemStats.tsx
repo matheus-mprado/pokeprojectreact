@@ -11,6 +11,8 @@ interface ItemStatsProps {
 }
 
 export function ItemStats({ title, stats, total, color }: ItemStatsProps) {
+    
+
     return (
         <Flex
             align="center"

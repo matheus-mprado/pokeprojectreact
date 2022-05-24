@@ -1,4 +1,4 @@
-import { Flex, Image, Text } from "@chakra-ui/react";
+import { Flex, Image, Spinner, Text } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { api } from "../../../service/api";
@@ -92,7 +92,16 @@ export function EvolutionPokemon({ evolutionChain, pokemonName }: EvolutionPokem
     }, [evolution])
 
     if (!evolution.chain) {
-        return null;
+        return (
+            <Flex
+                h="50%"
+                w="100%"
+                align="center"
+                justify="center"
+            >
+                <Spinner />
+            </Flex>
+        )
     }
 
     return (

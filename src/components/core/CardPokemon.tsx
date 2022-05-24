@@ -1,10 +1,10 @@
 import { Button, Flex, GridItem, Image, Text } from "@chakra-ui/react"
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { api } from "../service/api";
-import { ColorsData, PokemonData, PokemonResultData, Specie } from "../types/pokemon";
-import { switchColor } from "../utils/switchColor";
-import { ButtonType } from "./core/ButtonType";
+import { api } from "../../service/api";
+import { ColorsData, PokemonData, PokemonResultData, Specie } from "../../types/pokemon";
+import { switchColor } from "../../utils/switchColor";
+import { ButtonType } from "./ButtonType";
 
 interface CardPokemon {
     data: PokemonData

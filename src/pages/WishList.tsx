@@ -2,26 +2,28 @@ import { Flex, Grid, Image, Skeleton, Text } from "@chakra-ui/react"
 import { Router, useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import { HiOutlineArrowSmLeft, HiOutlineStar } from "react-icons/hi"
-import { CardPokemon } from "../components/CardPokemon"
+import { CardPokemon } from "../components/core/CardPokemon"
+import { SkeletonCardPokemon } from "../components/core/SkeletonCardPokemon"
+import { HeaderWishList } from "../components/screens/wishList/HeaderWishList"
 
 export default function WishList() {
 
-    const router = useRouter()
 
     const [wishList, setWishList] = useState([])
+    const [isLoading, setIsLoading] = useState(false)
 
+    // função para buscar pokemons no localstorage
     function getWishList() {
+        setIsLoading(true)
         if (typeof window !== undefined) {
             const data = JSON.parse(localStorage.getItem("@PokemonProject:PokemonWishList"))
             if (data !== null) {
                 setWishList(data)
             }
         }
+        setIsLoading(false)
     }
 
-    function handleGoBack(){
-        router.push('/')
-    }
 
     useEffect(() => {
         getWishList()
@@ -37,22 +39,8 @@ export default function WishList() {
                 'contentVisibility': 'auto'
             }}
         >
-            <Flex
-                w="100%"
-                justify="space-between"
-                align="center"
-            >
-                <HiOutlineArrowSmLeft size={28} color="#333" onClick={handleGoBack} />
-                <Text
-                    fontSize="2xl"
-                    mt="1rem"
-                    fontWeight={600}
-                    marginBottom="2rem"
-                >
-                    Wish List
-                </Text>
 
-            </Flex>
+            <HeaderWishList />
 
             <Image
                 src="/pokeball.svg"
@@ -69,20 +57,23 @@ export default function WishList() {
                 w="100%"
             >
                 {
-                    wishList.length > 0 ?
-                        wishList?.map(item => {
-                            return (
-                                <CardPokemon key={item.name} data={item} />
-                            )
-                        })
+                    isLoading ?
+                        <SkeletonCardPokemon />
                         :
-                        <>
-                            <Skeleton w="165px" h="115px" borderRadius={8} />
-                            <Skeleton w="165px" h="115px" borderRadius={8} />
-                            <Skeleton w="165px" h="115px" borderRadius={8} />
-                            <Skeleton w="165px" h="115px" borderRadius={8} />
-                            <Skeleton w="165px" h="115px" borderRadius={8} />
-                        </>
+                        wishList.length > 0 ?
+                            wishList?.map(item => {
+                                return (
+                                    <CardPokemon key={item.name} data={item} />
+                                )
+                            })
+                            :
+                            <Flex
+                                h="100vh"
+                                w="100%"
+                            >
+                                <Text>You not have any pokemon in your wish list 😢</Text>
+                            </Flex>
+
                 }
             </Grid>
         </Flex>
