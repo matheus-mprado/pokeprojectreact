@@ -7,7 +7,10 @@ import { switchColor } from "../../utils/switchColor";
 import { ButtonType } from "./ButtonType";
 
 interface CardPokemon {
-    data: PokemonData
+    data: {
+        name: string;
+        nick?: string;
+    }
 }
 
 export function CardPokemon({ data }: CardPokemon) {
@@ -61,7 +64,7 @@ export function CardPokemon({ data }: CardPokemon) {
                 maxH="7rem"
                 position="relative"
                 __css={{
-                    'contentVisibility':"auto"
+                    'contentVisibility': "auto"
                 }}
             >
 
@@ -81,7 +84,7 @@ export function CardPokemon({ data }: CardPokemon) {
                     fontWeight={600}
                     marginBottom="0.5rem"
                 >
-                    {pokemon.info?.name}
+                    {data.nick ? data.nick : pokemon.info?.name}
                 </Text>
 
                 <Flex

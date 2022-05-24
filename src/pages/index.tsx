@@ -26,10 +26,12 @@ const Home: NextPage = () => {
   async function getListPokemon() {
     setIsLoadingPokemon(true)
 
+
     try {
       const listPokemonsData = (await api.get(`pokemon?limit=${limitPage}&offset=${offsetPage}`)).data
       setLimitPage(limit => limit + INCREMENT_NUMBER_PER_PAGE);
       setOffsetPage(offset => offset + INCREMENT_NUMBER_PER_PAGE);
+
       if (limitPage > 880) {
         setHasMore(false)
       }
@@ -41,7 +43,6 @@ const Home: NextPage = () => {
 
     setIsLoadingPokemon(false)
   }
-
 
   // Executar assim que carregar a tela
   useEffect(() => {

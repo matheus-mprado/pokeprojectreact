@@ -44,6 +44,7 @@ type Specie = {
     evolution_chain: {
         url: string;
     }
+    capture_rate:number;
 }
 
 type FlavorText = {

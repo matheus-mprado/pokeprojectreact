@@ -2,11 +2,15 @@ import { Flex, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { HiOutlineArrowSmLeft } from "react-icons/hi";
 
-export function HeaderWishList() {
+interface HeaderGeneric {
+    title: string;
+}
+
+export function HeaderGeneric({ title }: HeaderGeneric) {
 
     const router = useRouter()
 
-    function handleGoBack(){
+    function handleGoBack() {
         router.push('/')
     }
 
@@ -23,7 +27,7 @@ export function HeaderWishList() {
                 fontWeight={600}
                 marginBottom="2rem"
             >
-                Wish List
+                {title}
             </Text>
 
         </Flex>

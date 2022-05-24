@@ -24,7 +24,7 @@ export function HeaderHome() {
                 size={22}
                 color="#333"
                 style={{ zIndex: 4, cursor: "pointer" }}
-                onClick={() => router.push('/WishList')}
+                onClick={() => router.push('/MyPokemons')}
 
             />
         </Flex>

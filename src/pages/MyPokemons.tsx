@@ -7,19 +7,19 @@ import { CardPokemon } from "../components/core/CardPokemon"
 import { SkeletonCardPokemon } from "../components/core/SkeletonCardPokemon"
 import { HeaderGeneric } from "../components/core/HeaderGeneric"
 
-export default function WishList() {
+export default function MyPokemons() {
 
 
-    const [wishList, setWishList] = useState([])
+    const [myPokemons, setMyPokemons] = useState([])
     const [isLoading, setIsLoading] = useState(false)
 
     // função para buscar pokemons no localstorage
-    function getWishList() {
+    function getMyPokemons() {
         setIsLoading(true)
         if (typeof window !== undefined) {
-            const data = JSON.parse(localStorage.getItem("@PokemonProject:PokemonWishList"))
+            const data = JSON.parse(localStorage.getItem("@PokemonProject:MyPokemons"))
             if (data !== null) {
-                setWishList(data)
+                setMyPokemons(data)
             }
         }
         setIsLoading(false)
@@ -27,13 +27,13 @@ export default function WishList() {
 
 
     useEffect(() => {
-        getWishList()
+        getMyPokemons()
     }, [])
 
     return (
         <>
             <Head>
-                <title>Wish List Pokemon</title>
+                <title>My Pokemon</title>
             </Head>
             <Flex
                 w="100%"
@@ -45,7 +45,9 @@ export default function WishList() {
                 }}
             >
 
-                <HeaderGeneric title="Wish List" />
+                <HeaderGeneric 
+                    title="My Pokemons"
+                />
 
                 <Image
                     src="/pokeball.svg"
@@ -65,8 +67,8 @@ export default function WishList() {
                         isLoading ?
                             <SkeletonCardPokemon />
                             :
-                            wishList.length > 0 ?
-                                wishList?.map(item => {
+                            myPokemons.length > 0 ?
+                                myPokemons?.map(item => {
                                     return (
                                         <CardPokemon key={item.name} data={item} />
                                     )

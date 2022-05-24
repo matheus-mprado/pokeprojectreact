@@ -82,6 +82,8 @@ export default function Pokemon({ }: PokemonProps) {
         }
     }
 
+    
+
     useEffect(() => {
         setExistInWishList(false)
         getPokemonData()
