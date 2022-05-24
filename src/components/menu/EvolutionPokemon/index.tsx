@@ -1,6 +1,7 @@
 import { Flex, Image, Text } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { api } from "../../../service/api";
 import { PokeServices } from "../../../service/PokeServices";
 import { RowEvolve } from "./RowEvolve";
 
@@ -8,6 +9,7 @@ interface EvolutionPokemonProps {
     evolutionChain: {
         url: string;
     }
+    pokemonName: string;
 }
 
 
@@ -33,11 +35,11 @@ type evolve = {
 }
 
 type evolutionData = {
-    chain: evolve
+    chain: evolve;
 }
 
 
-export function EvolutionPokemon({ evolutionChain }: EvolutionPokemonProps) {
+export function EvolutionPokemon({ evolutionChain, pokemonName }: EvolutionPokemonProps) {
 
     const pokeServices = new PokeServices()
 
@@ -53,8 +55,17 @@ export function EvolutionPokemon({ evolutionChain }: EvolutionPokemonProps) {
         let pokemonGetImages = [];
 
         if (evolution.chain.evolves_to[0]?.species.name) {
+            let evolveTwo = evolution.chain.evolves_to[0];
+            if (evolution.chain.evolves_to?.length > 2) {
+                if (evolution.chain.evolves_to.filter(item => item.species.name === pokemonName).length === 0) {
+                    evolveTwo = evolution.chain.evolves_to[0]
+                } else {
+                    evolveTwo = evolution.chain.evolves_to.filter(item => item.species.name === pokemonName)[0]
+                }
+            }
+
             let pokemonOne = await pokeServices.getImageFromSpecies(evolution.chain.species.name)
-            let pokemonTwo = await pokeServices.getImageFromSpecies(evolution.chain.evolves_to[0].species.name)
+            let pokemonTwo = await pokeServices.getImageFromSpecies(evolveTwo?.species.name)
 
             pokemonGetImages.push(pokemonOne, pokemonTwo)
         }
@@ -101,7 +112,7 @@ export function EvolutionPokemon({ evolutionChain }: EvolutionPokemonProps) {
                     <RowEvolve
                         firstImage={pokemonImages[0]}
                         firstName={evolution.chain.species.name}
-                        lvlEvolve={evolution.chain.evolves_to[0].evolution_details[0].min_level}
+                        howToEvolve={evolution.chain?.evolves_to[0]?.evolution_details[0]}
                         secoundImage={pokemonImages[1]}
                         secoundName={evolution.chain.evolves_to[0].species.name}
                     />
@@ -110,7 +121,7 @@ export function EvolutionPokemon({ evolutionChain }: EvolutionPokemonProps) {
                         <RowEvolve
                             firstImage={pokemonImages[1]}
                             firstName={evolution.chain.evolves_to[0].species.name}
-                            lvlEvolve={evolution.chain.evolves_to[0].evolves_to[0].evolution_details[0].min_level}
+                            howToEvolve={evolution.chain?.evolves_to[0]?.evolves_to[0]?.evolution_details[0]}
                             secoundImage={pokemonImages[2]}
                             secoundName={evolution.chain.evolves_to[0].evolves_to[0].species.name}
                         />
