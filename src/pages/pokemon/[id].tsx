@@ -1,19 +1,22 @@
 import { Button, Flex, Image, Text } from "@chakra-ui/react";
 import { GetServerSideProps } from "next"
 import { useRouter } from "next/router";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { HiArrowLeft, HiArrowRight, HiOutlineArrowSmLeft, HiOutlineStar } from 'react-icons/hi'
-import { ButtonMenu } from "../../components/ButtonMenu";
-import { ButtonType } from "../../components/ButtonType";
+import { ButtonMenu } from "../../components/core/ButtonMenu";
+import { ButtonType } from "../../components/core/ButtonType";
 import { AboutPokemon } from "../../components/menu/AboutPokemon";
 import { BaseStatsPokemon } from "../../components/menu/BaseStatsPokemon";
 import { EvolutionPokemon } from "../../components/menu/EvolutionPokemon";
+import { api } from "../../service/api";
 import { PokeServices } from "../../service/PokeServices";
-import { PokemonResultData } from "../../types/pokemon";
+import { ColorsData, PokemonData, PokemonResultData, Specie } from "../../types/pokemon";
 
 interface PokemonProps {
-    pokemon: PokemonResultData;
+    data: PokemonResultData;
 }
+
+
 
 const menuList = [
     {
@@ -29,27 +32,44 @@ const menuList = [
     }
 ];
 
-export default function Pokemon({ pokemon }: PokemonProps) {
+export default function Pokemon({ }: PokemonProps) {
 
     const router = useRouter()
 
     const [currentMenu, setCurrentMenu] = useState(1)
-    const [currentPokemonOrder, setCurrentPokemonOrder] = useState<null | number>(null)
+    const [pokemon, setPokemon] = useState<PokemonResultData>({} as PokemonResultData)
+    const [isLoading, setIsLoading] = useState(false)
+    const [colors, setColors] = useState<ColorsData>({} as ColorsData)
 
+    async function getPokemonData() {
+        setPokemon(null)
+        setIsLoading(true)
 
+        const { id } = router.query
 
-    function handleGetNextPokemon() {
-        router.push({
-            pathname: '/pokemon/[id]',
-            query: { id: currentPokemonOrder + 1 }
-        })
+        try {
+            const info: PokemonData = (await api.get(`pokemon/${id}`)).data
+            const specie: Specie = (await api.get(`pokemon-species/${id}`)).data
+            const image = info?.sprites.other["official-artwork"].front_default
+
+            const pokemon = {
+                info,
+                specie,
+                image,
+                id: String(info.id)
+            }
+
+            switchColor(specie)
+            setPokemon(pokemon)
+
+        } catch (err) {
+            console.log(err)
+        }
+        setIsLoading(false)
     }
 
-    async function handleGetPrevPokemon() {
-        router.push({
-            pathname: '/pokemon/[id]',
-            query: { id: currentPokemonOrder - 1 }
-        })
+    function handleGoBack() {
+        router.push('/')
     }
 
     function formatedIDPokemon(id: number) {
@@ -58,28 +78,64 @@ export default function Pokemon({ pokemon }: PokemonProps) {
             idFormatted = `#00${id}`
         } else if (id < 100 && id >= 10) {
             idFormatted = `#0${id}`
+        } else {
+            idFormatted = `#${id}`
         }
 
         return idFormatted;
     }
 
-    function handleGoBack() {
-        router.push("/")
+    function switchColor(specie) {
+        const pokemonColor = specie?.color.name;
+        let textColor: string = 'gray.50';
+        let iconColor: string = 'white';
+        let primary = `${pokemonColor}.400`;
+        let secondary = `${pokemonColor}.300`;
+        let colorScheme = pokemonColor;
+
+        if (pokemonColor === 'white') {
+            secondary = 'gray.50'
+            textColor = 'gray.700'
+            iconColor = '#101010'
+            colorScheme = 'gray'
+        }
+        const colors = {
+            primary,
+            secondary,
+            textColor,
+            iconColor,
+            colorScheme
+        }
+
+        setColors(colors)
     }
 
+    function handleNextPokemon() {
+        const nextPokemonID = Number(pokemon.id) + 1
+
+        router.push(`/pokemon/${nextPokemonID}`)
+    }
+
+
+    function handlePrevPokemon() {
+        const nextPokemonID = Number(pokemon.id) - 1
+
+        router.push(`/pokemon/${nextPokemonID}`)
+    }
+
+
+
     useEffect(() => {
-        console.clear()
-        console.log("a")
-        setCurrentPokemonOrder(pokemon.pokemon.infos.id)
-    }, [router.asPath])
+        getPokemonData()
+    }, [router.query.id])
 
     if (!pokemon) {
-        return null;
+        return null
     }
 
     return (
         <Flex
-            bg={`${pokemon.pokemon.species.color.name}.400`}
+            bg={colors.primary}
             h="100vh"
             w="100%"
             flexDir="column"
@@ -93,8 +149,8 @@ export default function Pokemon({ pokemon }: PokemonProps) {
                 pt="8"
 
             >
-                <HiOutlineArrowSmLeft size={28} color="white" onClick={handleGoBack} />
-                <HiOutlineStar size={22} color="white" />
+                <HiOutlineArrowSmLeft size={28} color={colors.iconColor} onClick={handleGoBack} />
+                <HiOutlineStar size={22} color={colors.iconColor} />
             </Flex>
 
             <Flex
@@ -111,17 +167,17 @@ export default function Pokemon({ pokemon }: PokemonProps) {
                         as="h2"
                         textTransform="capitalize"
                         fontWeight={600}
-                        color="gray.50"
+                        color={colors.textColor}
                         fontSize="1.75rem"
                     >
-                        {pokemon.pokemon.infos.name}
+                        {pokemon.info?.name}
                     </Text>
 
                     <Text
                         as="h3"
-                        color="gray.50"
+                        color={colors.textColor}
                     >
-                        {formatedIDPokemon(pokemon.pokemon.infos.id)}
+                        {formatedIDPokemon(pokemon.info?.id)}
                     </Text>
                 </Flex>
 
@@ -129,11 +185,11 @@ export default function Pokemon({ pokemon }: PokemonProps) {
                     gap="0.5rem"
                     mt="1rem"
                 >
-                    {pokemon.pokemon.infos.types.map(item => {
+                    {pokemon.info?.types.map(item => {
                         return (
                             <ButtonType
-                                key={`${pokemon.pokemon.infos.name}.type`}
-                                color={`${pokemon.pokemon.species.color.name}`}
+                                key={`${pokemon.info?.name}.type`}
+                                color={colors}
                                 type={item.type.name}
                             />
                         )
@@ -163,7 +219,7 @@ export default function Pokemon({ pokemon }: PokemonProps) {
             >
                 <Image
                     src={pokemon.image}
-                    alt={pokemon.pokemon.infos.name}
+                    alt={pokemon.info?.name}
                     w="250px"
                     objectFit="contain"
                     position="absolute"
@@ -196,13 +252,15 @@ export default function Pokemon({ pokemon }: PokemonProps) {
                 }
                 {currentMenu === 2 &&
                     <BaseStatsPokemon
-                        color={pokemon.pokemon.species.color.name}
-                        stats={pokemon.pokemon.infos.stats}
+                        color={colors}
+                        stats={pokemon.info?.stats}
                     />
                 }
 
                 {currentMenu === 3 &&
-                    <EvolutionPokemon evolutionChain={pokemon.pokemon.species.evolution_chain} />
+                    <EvolutionPokemon
+                        evolutionChain={pokemon.specie?.evolution_chain}
+                    />
                 }
             </Flex>
 
@@ -214,7 +272,7 @@ export default function Pokemon({ pokemon }: PokemonProps) {
                     outline: 'none'
                 }}
                 left="0"
-                onClick={handleGetPrevPokemon}
+                onClick={handlePrevPokemon}
             >
                 <HiArrowLeft size={32} color="white" />
             </Button>
@@ -228,32 +286,11 @@ export default function Pokemon({ pokemon }: PokemonProps) {
                     outline: 'none'
                 }}
                 right="0"
-                onClick={handleGetNextPokemon}
+                onClick={handleNextPokemon}
             >
                 <HiArrowRight size={32} color="white" />
             </Button>
 
         </Flex>
     )
-}
-
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-
-    const { id } = params;
-
-    const pokeApi = new PokeServices()
-    let pokemon = {};
-
-    try {
-        pokemon = await pokeApi.getDataPokemon(Number(id))
-    } catch (err) {
-        console.log(err)
-    }
-
-    return {
-        props: {
-            pokemon
-        },
-
-    }
 }

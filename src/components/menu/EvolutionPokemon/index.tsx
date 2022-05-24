@@ -52,14 +52,14 @@ export function EvolutionPokemon({ evolutionChain }: EvolutionPokemonProps) {
     async function getImages() {
         let pokemonGetImages = [];
 
-        if (evolution.chain.evolves_to[0].species.name) {
+        if (evolution.chain.evolves_to[0]?.species.name) {
             let pokemonOne = await pokeServices.getImageFromSpecies(evolution.chain.species.name)
             let pokemonTwo = await pokeServices.getImageFromSpecies(evolution.chain.evolves_to[0].species.name)
 
             pokemonGetImages.push(pokemonOne, pokemonTwo)
         }
 
-        if (evolution.chain.evolves_to[0].evolves_to[0].species.name) {
+        if (evolution.chain.evolves_to[0]?.evolves_to[0]?.species.name) {
             let pokemonTree = await pokeServices.getImageFromSpecies(evolution.chain.evolves_to[0].evolves_to[0].species.name)
 
             pokemonGetImages.push(pokemonTree)
@@ -71,14 +71,14 @@ export function EvolutionPokemon({ evolutionChain }: EvolutionPokemonProps) {
 
     useEffect(() => {
         getEvolutionChain()
-       
-    }, [])
 
-    useEffect(()=>{
+    }, [evolutionChain])
+
+    useEffect(() => {
         if (evolution.chain) {
             getImages()
         }
-    },[evolution])
+    }, [evolution])
 
     if (!evolution.chain) {
         return null;
@@ -96,27 +96,34 @@ export function EvolutionPokemon({ evolutionChain }: EvolutionPokemonProps) {
                 Evolution Chain
             </Text>
 
-            {evolution.chain.evolves_to[0].species.name &&
+            {evolution.chain?.evolves_to[0]?.species.name ?
+                <>
+                    <RowEvolve
+                        firstImage={pokemonImages[0]}
+                        firstName={evolution.chain.species.name}
+                        lvlEvolve={evolution.chain.evolves_to[0].evolution_details[0].min_level}
+                        secoundImage={pokemonImages[1]}
+                        secoundName={evolution.chain.evolves_to[0].species.name}
+                    />
 
-                <RowEvolve
-                    firstImage={pokemonImages[0]}
-                    firstName={evolution.chain.species.name}
-                    lvlEvolve={evolution.chain.evolves_to[0].evolution_details[0].min_level}
-                    secoundImage={pokemonImages[1]}
-                    secoundName={evolution.chain.evolves_to[0].species.name}
-                />
+                    {evolution.chain?.evolves_to[0]?.evolves_to[0]?.species.name &&
+                        <RowEvolve
+                            firstImage={pokemonImages[1]}
+                            firstName={evolution.chain.evolves_to[0].species.name}
+                            lvlEvolve={evolution.chain.evolves_to[0].evolves_to[0].evolution_details[0].min_level}
+                            secoundImage={pokemonImages[2]}
+                            secoundName={evolution.chain.evolves_to[0].evolves_to[0].species.name}
+                        />
+                    }
+                </>
+                :
+                <Text>
+                    This pokemon not have evolution 😢
+                </Text>
 
             }
 
-            {evolution.chain.evolves_to[0].evolves_to[0].species.name &&
-                <RowEvolve
-                    firstImage={pokemonImages[1]}
-                    firstName={evolution.chain.evolves_to[0].species.name}
-                    lvlEvolve={evolution.chain.evolves_to[0].evolves_to[0].evolution_details[0].min_level}
-                    secoundImage={pokemonImages[2]}
-                    secoundName={evolution.chain.evolves_to[0].evolves_to[0].species.name}
-                />
-            }
+
 
         </Flex >
     )

@@ -3,23 +3,27 @@ import { useEffect, useState } from 'react';
 import { Flex, Grid, Skeleton, Text } from '@chakra-ui/react';
 import { CardPokemon } from '../components/CardPokemon';
 import { PokeServices } from '../service/PokeServices'
-import { PokemonResultData } from '../types/pokemon';
+import { PokemonData, PokemonResultData, Specie } from '../types/pokemon';
+import { api } from '../service/api';
 
 const Home: NextPage = () => {
 
-  const pokeServices = new PokeServices();
 
-  
-  const [listPokemons, setListPokemons] = useState<PokemonResultData[]>([])
+  const [listPokemons, setListPokemons] = useState([])
   const [isLoadingPokemon, setIsLoadingPokemon] = useState(false)
 
 
   async function getListPokemon() {
     setIsLoadingPokemon(true)
 
-    const dataList = await pokeServices.getPokemonList();
+    try {
+      const listPokemonsData = (await api.get(`pokemon`)).data
+      console.log(listPokemonsData)
+      setListPokemons(listPokemonsData.results)
 
-    setListPokemons(dataList)
+    } catch (err) {
+
+    }
 
     setIsLoadingPokemon(false)
   }
@@ -53,7 +57,7 @@ const Home: NextPage = () => {
           listPokemons ?
             listPokemons?.map(item => {
               return (
-                <CardPokemon key={item.pokemon.infos.id} data={item} />
+                <CardPokemon key={item.name} data={item} />
               )
             })
             :
