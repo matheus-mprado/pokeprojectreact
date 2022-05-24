@@ -17,12 +17,12 @@ export function AboutPokemon({ pokemon }: AboutPokemon) {
                 color="#555"
                 fontWeight={400}
             >
-                {pokemon.pokemon?.species.flavor_text_entries[9].flavor_text}
+                {pokemon.specie?.flavor_text_entries[9].flavor_text}
             </Text>
-            <InfoText title="Species" info={pokemon.pokemon?.infos.species.name} />
-            <InfoText title="Height" info={`${pokemon.pokemon?.infos.height / 10} m`} />
-            <InfoText title="Weight" info={`${pokemon.pokemon?.infos.weight / 10} kg`} />
-            <InfoText title="Abilities" abilities={pokemon.pokemon?.infos.abilities} />
+            <InfoText title="Species" info={pokemon.info?.species.name} />
+            <InfoText title="Height" info={`${pokemon.info?.height / 10} m`} />
+            <InfoText title="Weight" info={`${pokemon.info?.weight / 10} kg`} />
+            <InfoText title="Abilities" abilities={pokemon.info?.abilities} />
         </Flex>
     )
 }

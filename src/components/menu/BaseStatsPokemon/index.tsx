@@ -1,10 +1,10 @@
 import { Flex } from "@chakra-ui/react"
-import { BaseStats } from "../../../types/pokemon"
+import { BaseStats, ColorsData } from "../../../types/pokemon"
 import { ItemStats } from "./ItemStats"
 
 interface BaseStatsProps {
     stats: BaseStats[]
-    color: string;
+    color: ColorsData;
 }
 
 export function BaseStatsPokemon({ stats, color }: BaseStatsProps) {

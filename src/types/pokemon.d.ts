@@ -10,7 +10,7 @@ export type PokemonData = {
     abilities: Abilities[]
     types: TypesPokemon[]
     stats: BaseStats[]
-    id:number;
+    id: number;
 }
 
 
@@ -51,11 +51,12 @@ type FlavorText = {
 }
 
 type PokemonResultData = {
-    pokemon: {
-        infos: PokemonData,
-        species: Specie
-    }
+
+    info: PokemonData,
+    specie: Specie
+
     image: string;
+    id: string;
 }
 
 type BaseStats = {
@@ -63,4 +64,12 @@ type BaseStats = {
     stat: {
         name: string;
     }
+}
+
+export type ColorsData = {
+    primary: string;
+    secondary: string;
+    textColor: string;
+    iconColor: string;
+    colorScheme: string;
 }

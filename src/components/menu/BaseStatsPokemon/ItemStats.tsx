@@ -1,4 +1,5 @@
 import { Flex, Progress, Text } from "@chakra-ui/react";
+import { ColorsData } from "../../../types/pokemon";
 import { TitleInfo } from "../../core/TitleInfo";
 import { ValueInfo } from "../../core/ValueInfo";
 
@@ -6,7 +7,7 @@ interface ItemStatsProps {
     title: string;
     stats: number;
     total?: boolean;
-    color?: string;
+    color?: ColorsData;
 }
 
 export function ItemStats({ title, stats, total, color }: ItemStatsProps) {
@@ -26,7 +27,7 @@ export function ItemStats({ title, stats, total, color }: ItemStatsProps) {
             <Progress
                 w="100%"
                 h="1"
-                colorScheme={color}
+                colorScheme={color?.colorScheme}
                 value={total ? stats / 6 : stats}
                 ml="5"
             />
