@@ -1,4 +1,4 @@
-import { Button, Flex, Image, Text } from "@chakra-ui/react";
+import { Button, Flex, Image, Spinner, Text } from "@chakra-ui/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useLayoutEffect, useState } from "react";
@@ -167,7 +167,7 @@ export default function Pokemon({ }: PokemonProps) {
                 align="center"
                 justify="center"
             >
-                Not have pokemon here 😢
+                <Spinner/>
             </Flex>)
     }
 
