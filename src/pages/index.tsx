@@ -1,6 +1,6 @@
 import type { NextPage } from 'next'
 import { useEffect, useState } from 'react';
-import { Flex, Grid, Image, Spinner } from '@chakra-ui/react';
+import { Flex, Grid, Image, Spinner, useDisclosure } from '@chakra-ui/react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import { CardPokemon } from '../components/core/CardPokemon';
@@ -9,11 +9,14 @@ import { SkeletonCardPokemon } from '../components/core/SkeletonCardPokemon';
 
 import { api } from '../service/api';
 import Head from 'next/head';
+import { Sidemenu } from '../components/screens/home/Sidemenu';
 
 
 const INCREMENT_NUMBER_PER_PAGE = 20;
 
 const Home: NextPage = () => {
+
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
   const [listPokemons, setListPokemons] = useState([])
   const [isLoadingPokemon, setIsLoadingPokemon] = useState(false)
@@ -65,7 +68,9 @@ const Home: NextPage = () => {
         }}
       >
 
-        <HeaderHome />
+        <HeaderHome
+          onOpenMenu={onOpen}
+        />
 
         <Image
           src="/pokeball.svg"
@@ -109,6 +114,13 @@ const Home: NextPage = () => {
             }
           </Grid>
         </InfiniteScroll>
+
+
+        <Sidemenu
+          isOpen={isOpen}
+          onClose={onClose}
+        />
+
       </Flex >
     </>
   )

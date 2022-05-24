@@ -1,8 +1,8 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { HiStar } from "react-icons/hi";
+import { RiMenu3Fill } from "react-icons/ri";
 
-export function HeaderHome() {
+export function HeaderHome({onOpenMenu}) {
 
     const router = useRouter()
 
@@ -20,11 +20,11 @@ export function HeaderHome() {
             >
                 Pokedex
             </Text>
-            <HiStar
+            <RiMenu3Fill
                 size={22}
                 color="#333"
                 style={{ zIndex: 4, cursor: "pointer" }}
-                onClick={() => router.push('/MyPokemons')}
+                onClick={onOpenMenu}
 
             />
         </Flex>
