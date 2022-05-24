@@ -33,7 +33,6 @@ export function BottonSheet({ colors, pokemon }: BottomSheetProps) {
             return;
         }
 
-        console.log(valueCapture, (Math.ceil(captureRate / POINTS_TO_DIFFICULT_GOTCHA)))
         if (valueCapture <= (Math.ceil(captureRate / POINTS_TO_DIFFICULT_GOTCHA))) {
             setNamePokemonGotcha(pokemon.info?.name)
             setIsSuccess(true)
