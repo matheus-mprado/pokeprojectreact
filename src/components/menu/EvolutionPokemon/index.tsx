@@ -78,7 +78,7 @@ export function EvolutionPokemon({ evolutionChain }: EvolutionPokemonProps) {
         if (evolution.chain) {
             getImages()
         }
-    },[])
+    },[evolution])
 
     if (!evolution.chain) {
         return null;
