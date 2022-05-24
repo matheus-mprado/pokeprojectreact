@@ -94,8 +94,8 @@ export function InfosPokemon({ colors, pokemon }: InfosPokemon) {
                     <Image
                         src="/ball.png"
                         alt="have this pokemon"
-                        w="25px"
-                        objectFit="cover"
+                        w="30px"
+                        objectFit="contain"
                     />
                 }
             </Flex>

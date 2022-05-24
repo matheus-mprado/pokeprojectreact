@@ -3,6 +3,7 @@ import { Router, useRouter } from "next/router";
 import { useState } from "react";
 import { ColorsData, PokemonResultData } from "../../../../types/pokemon";
 import { MenuList } from "../MenuList";
+import { ModalAlreadyHavePokemon } from "../ModalAlreadyHavePokemon";
 import { ModalGotchPokemon } from "../ModalGotchPokemon";
 import { SuccessGotcha } from "../ModalGotchPokemon/SuccessGotcha";
 
@@ -21,6 +22,7 @@ export function BottonSheet({ colors, pokemon }: BottomSheetProps) {
 
     const [namePokemonGotcha, setNamePokemonGotcha] = useState<null | string>(null)
     const [isSuccess, setIsSuccess] = useState(false)
+    const [isAlreadyExists, setIsAlreadyExists] = useState(false)
 
     function handleGotchaPokemon() {
         const captureRate = pokemon.specie?.capture_rate;
@@ -43,7 +45,7 @@ export function BottonSheet({ colors, pokemon }: BottomSheetProps) {
 
         if (data !== null) {
             if (data.filter(item => item.name === name).length > 0) {
-                alert("você já possui esse pokemon")
+                setIsAlreadyExists(true)
                 return true;
             } else {
                 return false;
@@ -120,6 +122,11 @@ export function BottonSheet({ colors, pokemon }: BottomSheetProps) {
             <MenuList
                 colors={colors}
                 pokemon={pokemon}
+            />
+
+            <ModalAlreadyHavePokemon
+                isAlreadyExists={isAlreadyExists}
+                setIsAlreadyExists={setIsAlreadyExists}
             />
 
             <ModalGotchPokemon
